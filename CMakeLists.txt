@@ -13,7 +13,7 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 find_package(SDL2 REQUIRED SDL2)
 include_directories(${SDL2_INCLUDE_DIRS})
-add_executable(main main.c hal/simulator.c hal/notkiav2.c screens/boot.c screens/main.c styles/main_screen_style.c ${SOURCES} ${INCLUDES})
+add_executable(main main.c hal/simulator.c hal/notkiav2.c screens/boot.c screens/main.c styles/main_screen_style.c software/games/snake.c${SOURCES} ${INCLUDES})
 add_compile_definitions(LV_CONF_INCLUDE_SIMPLE)
 target_link_libraries(main PRIVATE lvgl lvgl::examples lvgl::demos lvgl::drivers ${SDL2_LIBRARIES})
 add_compile_definitions(TARGET_SIMULATOR_HAL)

@@ -16,6 +16,7 @@
 #include "screens/boot.h"
 #include "screens/main.h"
 #include "styles/main_screen_style.h"
+#include "software/games/snake.h"
 
 #if !defined(TARGET_SIMULATOR_HAL) && !defined(TARGET_NOTKIAV2_HAL)
     #error "No target hal selected, please define TARGET_SIMULATOR_HAL or TARGET_NOTKIAV2_HAL"
@@ -62,7 +63,7 @@ int main(int argc, char **argv)
   
   styles_init();
   
-  show_main_screen();
+  snake_game_menu_screen();
 
   while(1) {
       /* Periodically call the lv_task handler.
