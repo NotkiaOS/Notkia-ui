@@ -6,9 +6,9 @@ lv_obj_t *snake_game_menu_screen_obj;
 lv_obj_t *snake_game_screen;
 
 lv_obj_t * canvas;
-#define ROW 11
-#define COL 14
-int gameover;
+#define ROW 22
+#define COL 22
+
 int key=1;
 
 int x, y, fruitx, fruity, flag;
@@ -18,27 +18,15 @@ int tailx, taily;
 int tailmax = 4;//Snake length
 int gameover=0;//Determine whether the game is over
 	
-int disp[11][14];
-int direction;
-int point_head[1];
+int disp[ROW][COL];
+
 void draw_snake_game_canvas()
 {
-     printf("Drawing\n");
      lv_draw_rect_dsc_t rect_dsc;
      lv_draw_line_dsc_t line;
      lv_draw_line_dsc_init(&line);
-     // Not sure, do we need grid? Commented for now.
-    /* for(int i=0; i<11; i++){
-            lv_point_t line_points[] = { {20*i, 0}, {20*i, 280}};
-            lv_canvas_draw_line(canvas, line_points, 2, &line);
-    }
-    
-    for(int i=0; i<14; i++){
-            lv_point_t line_points[] = { {0, 20*i}, {220, 20*i}};
-            lv_canvas_draw_line(canvas, line_points, 2, &line);
-    }*/
-    for(int i=0; i<11; i++){
-        for(int j=0; j<14; j++){
+    for(int i=0; i<ROW; i++){
+        for(int j=0; j<COL; j++){
             if(disp[i][j]==0){
                  lv_draw_rect_dsc_init(&rect_dsc);
                  rect_dsc.bg_color = lv_palette_main(LV_PALETTE_GREY);
@@ -51,13 +39,25 @@ void draw_snake_game_canvas()
                  lv_draw_rect_dsc_init(&rect_dsc);
                  rect_dsc.bg_color = lv_palette_main(LV_PALETTE_RED);
             }
-            //if(disp[i][j]==3){
-            //     lv_draw_rect_dsc_init(&rect_dsc);
-            //     rect_dsc.bg_color = lv_palette_main(LV_PALETTE_BLUE);
-            //}
-            lv_canvas_draw_rect(canvas, 20*i, 20*j, 20, 20, &rect_dsc);
+            if(disp[i][j]==-1){
+                 lv_draw_rect_dsc_init(&rect_dsc);
+                 rect_dsc.bg_color = lv_palette_main(LV_PALETTE_BLUE);
+            }
+            
+            lv_canvas_draw_rect(canvas, lv_obj_get_width(canvas)/ROW*i, lv_obj_get_width(canvas)/COL*j, lv_obj_get_width(canvas)/ROW, lv_obj_get_width(canvas)/COL, &rect_dsc);
         }
     }
+}
+
+void new_food()
+{
+    int new_x = rand() % COL+1;
+    int new_y = rand() % ROW+1;
+    if(disp[new_x][new_y]!=0){
+        new_food();
+    }
+    printf("New food x: %d, y: %d\n", new_x, new_y);
+    disp[new_x][new_y]=-1;
 }
 
 void logic(lv_timer_t * timer)
@@ -68,7 +68,6 @@ void logic(lv_timer_t * timer)
 				{
 					handx = i;
 					handy = j;
-					printf("Handx: %d, Handy: %d\n", handx, handy);
 				}//Find head coordinates
 		for(int i=0;i<ROW;i++)
 			for(int j=0;j<COL;j++)
@@ -76,10 +75,8 @@ void logic(lv_timer_t * timer)
 				{
 					tailx = i;
 					taily = j;
-			    printf("Tailx: %d, Taily: %d\n", tailx, taily);
 				}//Find tail coordinates
-	    //key=2;
-	    printf("Key is: %d\n", key);
+
 		switch (key)
 		{
 		case 0:
@@ -100,7 +97,7 @@ void logic(lv_timer_t * timer)
 							disp[i][j]++;
 				disp[handx - 1][handy] = 1;
 				tailmax++;
-			    //toeat(a);
+			    new_food();
 			}
 			else gameover = 1;
 			break;
@@ -122,7 +119,7 @@ void logic(lv_timer_t * timer)
 							disp[i][j]++;
 				disp[handx + 1][handy] = 1;
 				tailmax++;
-				//toeat(a);
+				new_food();
 			}
 			else gameover = 1;
 			break;
@@ -144,7 +141,7 @@ void logic(lv_timer_t * timer)
 							disp[i][j]++;
 				disp[handx][handy - 1] = 1;
 				tailmax++;
-				//toeat(a);
+				new_food();
 			}
 			else gameover = 1;
 			break;
@@ -166,27 +163,12 @@ void logic(lv_timer_t * timer)
 							disp[i][j]++;
 				disp[handx][handy + 1] = 1;
 				tailmax++;
-				//toeat(a);
+				new_food();
 			}
 			else gameover = 1;
 			break;
 		}
 		draw_snake_game_canvas();
-}
-
-void snake_game_task(lv_timer_t * timer)
-{
-     for(int i=0; i<11; i++){
-        for(int j=0; j<14; j++){
-            if(disp[i][j]!=0){
-                disp[i+1][j]=disp[i][j];
-                printf("Moved %d %d to %d %d\n", i,j,i+1, j);
-                disp[i][j]=0;
-                i=100;
-            }
-        }
-     }
-     draw_snake_game_canvas();
 }
 
 static void snake_game_event_handler(lv_event_t * e)
@@ -233,8 +215,8 @@ void start_snake_game()
     lv_obj_center(canvas);
     lv_canvas_fill_bg(canvas, lv_palette_lighten(LV_PALETTE_GREY, 3), LV_OPA_COVER);
     printf("feeling array\n");
-    for(int i=0; i<11; i++){
-        for(int j=0; j<14; j++){
+    for(int i=0; i<ROW; i++){
+        for(int j=0; j<COL; j++){
             disp[i][j]=0;
         }
     }
@@ -244,6 +226,8 @@ void start_snake_game()
     disp[4][5]=2;
     disp[3][5]=3;
     disp[2][5]=4;
+
+    new_food();
     
     lv_timer_t * timer = lv_timer_create(logic, 500, 0);
     
