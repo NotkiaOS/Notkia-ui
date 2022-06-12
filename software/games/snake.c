@@ -6,6 +6,9 @@ lv_obj_t *snake_game_menu_screen_obj;
 lv_obj_t *snake_game_screen;
 
 lv_obj_t * canvas;
+
+lv_obj_t * score_label;
+
 #define ROW 22
 #define COL 22
 
@@ -51,6 +54,13 @@ void draw_snake_game_canvas()
 
 void new_food()
 {
+    for(int i=0;i<ROW;i++){
+			for(int j=0;j<COL;j++){
+				if (disp[i][j] == -1){
+				    return;
+				}
+		    }
+    }
     int new_x = rand() % COL+1;
     int new_y = rand() % ROW+1;
     if(disp[new_x][new_y]!=0){
@@ -168,6 +178,7 @@ void logic(lv_timer_t * timer)
 			else gameover = 1;
 			break;
 		}
+		lv_label_set_text_fmt(score_label, "Score: %d", 10*(tailmax-4));
 		draw_snake_game_canvas();
 }
 
@@ -230,6 +241,12 @@ void start_snake_game()
     new_food();
     
     lv_timer_t * timer = lv_timer_create(logic, 500, 0);
+    
+    score_label = lv_label_create(lv_scr_act());
+    //lv_obj_add_style(clock_label, &clock_style, 0);
+    lv_label_set_text_fmt(score_label, "Score: %d", tailmax);
+    lv_obj_set_style_text_align(score_label, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_align(score_label, LV_ALIGN_BOTTOM_LEFT, 0, 0);
     
     draw_snake_game_canvas();
     
