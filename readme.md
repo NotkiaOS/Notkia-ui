@@ -1,3 +1,5 @@
+[![CMake](https://github.com/NotkiaOS/Notkia-ui/actions/workflows/cmake.yml/badge.svg?branch=master)](https://github.com/NotkiaOS/Notkia-ui/actions/workflows/cmake.yml)
+
 ## Clone
 First clone this repo.  
 Then clean submodules with: git submodule update --init --recursive  
